@@ -41,7 +41,7 @@
         .content {
             line-height: 1.6;
             color: #333;
-            white-space: pre-wrap; /* preserve line breaks */
+            white-space: pre-wrap;
         }
         .actions {
             margin-top: 20px;
@@ -66,40 +66,38 @@
 <body>
 
 <header>
-    <div>
-        <a th:href="@{/}">&#8592; Back to Home</a>
-    </div>
+    <a th:href="@{/}">&#8592; Back to Home</a>
 </header>
 
 <div class="container">
+
     <h1 th:text="${post.title}">Title</h1>
+
     <div class="meta">
-        <span th:text="${post.author != null ? post.author : 'Unknown author'}">Author</span>
+        <span th:text="${post.author != null ? post.author : 'Unknown author'}"></span>
         ·
-        <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy HH:mm')}">Date</span>
+        <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy HH:mm')}"></span>
     </div>
 
     <div class="content" th:text="${post.content}">
         Content here...
     </div>
 
-    <div class="actions">
-        <a th:href="@{'/posts/' + ${post.id} + '/edit'}" class="btn-edit">Edit</a>
+    <!-- ⭐ Show Edit/Delete ONLY to owner -->
+    <div class="actions" th:if="${post.createdBy == #authentication.name}">
+
+        <a th:href="@{'/posts/' + ${post.id} + '/edit'}" class="btn-edit">
+            Edit
+        </a>
+
         <form th:action="@{'/posts/' + ${post.id} + '/delete'}"
               method="post" style="display:inline;">
             <button type="submit" class="btn-delete">Delete</button>
         </form>
+
     </div>
-    <div th:if="${post.createdBy == #authentication.name}">
-    <a th:href="@{'/posts/' + ${post.id} + '/edit'}">Edit</a>
-    <form th:action="@{'/posts/' + ${post.id} + '/delete'}" method="post">
-        <button>Delete</button>
-    </form>
-</div>
 
 </div>
 
 </body>
 </html>
-
-

@@ -33,5 +33,6 @@ public class Post {
     private LocalDateTime createdAt;            // 23: Creation time
 
     private LocalDateTime updatedAt;            // 24: Last update time
+    private String createdBy;
 }
 

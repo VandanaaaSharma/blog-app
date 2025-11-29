@@ -1,17 +1,17 @@
 package com.blog.blog_app.service;
 
-import com.blog.blog_app.model.Post;            // 1: Post class
-import java.util.List;                          // 2: For List<Post>
+import com.blog.blog_app.model.Post;
+import java.util.List;
 
-public interface PostService {                  // 3: Service contract
+public interface PostService {
 
-    List<Post> getAllPosts();                   // 4: Fetch all posts
+    List<Post> getAllPosts();
 
-    Post getPostById(Long id);                  // 5: Get single post
+    Post getPostById(Long id);
 
-    Post createPost(Post post);                 // 6: Create new post
+    Post createPost(Post post);
 
-    Post updatePost(Long id, Post post);        // 7: Update existing post
+    Post updatePost(Long id, Post post, String username);
 
-    void deletePost(Long id);                   // 8: Delete post
+    void deletePost(Long id, String username);
 }

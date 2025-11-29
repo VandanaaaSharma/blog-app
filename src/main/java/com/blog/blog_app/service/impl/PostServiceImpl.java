@@ -1,59 +1,71 @@
-package com.blog.blog_app.service.impl;         // 1: Implementation package
+package com.blog.blog_app.service.impl;
 
-import com.blog.blog_app.model.Post;            // 2: Entity
+import com.blog.blog_app.model.Post;
 import com.blog.blog_app.repository.PostRepository;
-                                                // 3: DB access
-import com.blog.blog_app.service.PostService;   // 4: Interface
-import org.springframework.stereotype.Service;  // 5: Marks class as service
-import java.time.LocalDateTime;                 // 6: For timestamps
-import java.util.List;                          // 7: List
-import java.util.NoSuchElementException;        // 8: For not found
+import com.blog.blog_app.service.PostService;
+import org.springframework.stereotype.Service;
 
-@Service                                        // 9: Spring will manage this as a bean
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+@Service
 public class PostServiceImpl implements PostService {
 
-    private final PostRepository postRepository; // 10: Dependency
+    private final PostRepository postRepository;
 
-    // 11: Constructor injection (recommended)
     public PostServiceImpl(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
 
     @Override
-    public List<Post> getAllPosts() {           // 12: Get all posts
-        return postRepository.findAll();        // 13: Uses JPA built-in method
+    public List<Post> getAllPosts() {
+        return postRepository.findAll();
     }
 
     @Override
-    public Post getPostById(Long id) {          // 14: Find post by ID
+    public Post getPostById(Long id) {
         return postRepository.findById(id)
-                .orElseThrow(() ->              // 15: If not found, throw error
+                .orElseThrow(() ->
                         new NoSuchElementException("Post not found with id: " + id));
     }
 
     @Override
-    public Post createPost(Post post) {         // 16: Create new post
-        post.setCreatedAt(LocalDateTime.now()); // 17: Set created time
-        post.setUpdatedAt(LocalDateTime.now()); // 18: Set updated time same initially
-        return postRepository.save(post);       // 19: Save to DB
+    public Post createPost(Post post) {
+        post.setCreatedAt(LocalDateTime.now());
+        post.setUpdatedAt(LocalDateTime.now());
+        return postRepository.save(post);
     }
 
     @Override
-    public Post updatePost(Long id, Post postDetails) {
-                                                // 20: Update existing post
-        Post existingPost = getPostById(id);    // 21: Fetch from DB
+    public Post updatePost(Long id, Post updatedPost, String username) {
 
-        existingPost.setTitle(postDetails.getTitle());       // 22: Update title
-        existingPost.setSummary(postDetails.getSummary());   // 23: Update summary
-        existingPost.setContent(postDetails.getContent());   // 24: Update content
-        existingPost.setAuthor(postDetails.getAuthor());     // 25: Update author
-        existingPost.setUpdatedAt(LocalDateTime.now());      // 26: New update time
+        Post existingPost = getPostById(id);
 
-        return postRepository.save(existingPost);            // 27: Save changes
+        // Allow only owner to edit
+        if (!existingPost.getCreatedBy().equals(username)) {
+            throw new RuntimeException("Unauthorized to edit this post");
+        }
+
+        existingPost.setTitle(updatedPost.getTitle());
+        existingPost.setSummary(updatedPost.getSummary());
+        existingPost.setContent(updatedPost.getContent());
+        existingPost.setAuthor(updatedPost.getAuthor());
+        existingPost.setUpdatedAt(LocalDateTime.now());
+
+        return postRepository.save(existingPost);
     }
 
     @Override
-    public void deletePost(Long id) {           // 28: Delete post
-        postRepository.deleteById(id);          // 29: Delete by ID
+    public void deletePost(Long id, String username) {
+
+        Post existingPost = getPostById(id);
+
+        // Allow only owner to delete
+        if (!existingPost.getCreatedBy().equals(username)) {
+            throw new RuntimeException("Unauthorized to delete this post");
+        }
+
+        postRepository.deleteById(id);
     }
 }

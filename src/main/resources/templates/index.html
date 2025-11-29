@@ -61,11 +61,17 @@
             margin: 0 0 12px;
             color: #444;
         }
-        .post-actions a {
+        .post-actions a, .post-actions button {
             margin-right: 10px;
             font-size: 13px;
             text-decoration: none;
             color: #4c6fff;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .delete-btn {
+            color: #ff4c4c;
         }
         .empty-state {
             text-align: center;
@@ -82,39 +88,47 @@
 </header>
 
 <div class="container">
+
+    <!-- Empty state message -->
     <div th:if="${#lists.isEmpty(posts)}" class="empty-state">
         <p>No posts yet. Click "New Post" to create your first one!</p>
     </div>
 
+    <!-- Loop through posts -->
     <div th:each="post : ${posts}" class="post-card">
-        <h2 class="post-title" th:text="${post.title}">Post title</h2>
-        <div class="post-meta">
-            <span th:text="${post.author != null ? post.author : 'Unknown author'}">Author</span>
-            ·
-            <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy HH:mm')}">Date</span>
-        </div>
-        <p class="post-summary" th:text="${post.summary}">Short summary here...</p>
-        <div class="post-actions">
-            <a th:href="@{'/posts/' + ${post.id}}">Read more</a>
-            <a th:href="@{'/posts/' + ${post.id} + '/edit'}">Edit</a>
-            <form th:action="@{'/posts/' + ${post.id} + '/delete'}" method="post"
-                  style="display:inline;">
-                <button type="submit"
-                        style="border:none;background:none;color:#ff4c4c;cursor:pointer;font-size:13px;">
-                    Delete
-                </button>
-                <div th:if="${post.createdBy == #authentication.name}">
-    <a th:href="@{'/posts/' + ${post.id} + '/edit'}">Edit</a>
-    <form th:action="@{'/posts/' + ${post.id} + '/delete'}" method="post">
-        <button>Delete</button>
-    </form>
-</div>
 
-            </form>
+        <h2 class="post-title" th:text="${post.title}">Post title</h2>
+
+        <div class="post-meta">
+            <span th:text="${post.author != null ? post.author : 'Unknown'}"></span>
+            ·
+            <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy HH:mm')}"></span>
+        </div>
+
+        <p class="post-summary" th:text="${post.summary}">Short summary...</p>
+
+        <!-- Actions -->
+        <div class="post-actions">
+
+            <!-- READ MORE ALWAYS VISIBLE -->
+            <a th:href="@{'/posts/' + ${post.id}}">Read more</a>
+
+            <!-- SHOW ONLY IF CURRENT USER OWNS THIS POST -->
+            <span th:if="${post.createdBy == #authentication.name}">
+
+                <a th:href="@{'/posts/' + ${post.id} + '/edit'}">Edit</a>
+
+                <form th:action="@{'/posts/' + ${post.id} + '/delete'}"
+                      method="post"
+                      style="display:inline;">
+                    <button type="submit" class="delete-btn">Delete</button>
+                </form>
+
+            </span>
+
         </div>
     </div>
 </div>
 
 </body>
 </html>
-
