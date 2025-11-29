@@ -1,38 +1,35 @@
-package com.blog.blog_app.model;                 // 1: Package name (matches folder)
+package com.blog.blog_app.model;
 
-import jakarta.persistence.*;                    // 2: JPA annotations like @Entity, @Id
-import lombok.*;                                // 3: Lombok for getters/setters, etc.
-import java.time.LocalDateTime;                 // 4: Date/time for createdAt
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
-@Entity                                         // 5: Marks this class as a JPA entity (table)
-@Table(name = "posts")                          // 6: DB table name "posts"
-@Getter                                         // 7: Lombok generates getters
-@Setter                                         // 8: Lombok generates setters
-@NoArgsConstructor                              // 9: Lombok generates empty constructor
-@AllArgsConstructor                             // 10: Lombok generates all-args constructor
-@Builder                                        // 11: Lombok adds builder pattern
+@Entity
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Table(name = "posts")
 public class Post {
 
-    @Id                                         // 12: Primary key
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-                                                // 13: Auto-increment ID
-    private Long id;                            // 14: Column "id"
+    private Long id;
 
-    @Column(nullable = false, length = 150)     // 15: Not null, max length 150
-    private String title;                       // 16: Post title
+    private String title;
 
-    @Column(nullable = false, length = 500)     // 17: Short summary
-    private String summary;                     // 18: Field for summary/description
+    private String summary;
 
-    @Lob                                        // 19: "Large Object" → text/blob
-    @Column(nullable = false)                   // 20: Full content cannot be null
-    private String content;                     // 21: Full blog content
+    @Lob
+    private String content;
 
-    private String author;                      // 22: Optional author name
+    private LocalDateTime createdAt;
 
-    private LocalDateTime createdAt;            // 23: Creation time
+    private LocalDateTime updatedAt;
 
-    private LocalDateTime updatedAt;            // 24: Last update time
-    private String createdBy;
+    // ⭐ Post belongs to a user
+    @ManyToOne
+    private User createdBy;
+
+    // ⭐ One post → many comments
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> comments;
 }
-
