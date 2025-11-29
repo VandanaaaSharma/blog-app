@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${post.title}">Post</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f5fb;
+            margin: 0;
+        }
+        header {
+            background: #4c6fff;
+            color: white;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 12px;
+            padding: 24px 26px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+        .meta {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 12px;
+        }
+        h1 {
+            margin-top: 0;
+        }
+        .content {
+            line-height: 1.6;
+            color: #333;
+            white-space: pre-wrap; /* preserve line breaks */
+        }
+        .actions {
+            margin-top: 20px;
+        }
+        .actions a {
+            text-decoration: none;
+            margin-right: 12px;
+            font-size: 14px;
+        }
+        .btn-edit {
+            color: #4c6fff;
+        }
+        .btn-delete {
+            color: #ff4c4c;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        <a th:href="@{/}">&#8592; Back to Home</a>
+    </div>
+</header>
+
+<div class="container">
+    <h1 th:text="${post.title}">Title</h1>
+    <div class="meta">
+        <span th:text="${post.author != null ? post.author : 'Unknown author'}">Author</span>
+        ·
+        <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy HH:mm')}">Date</span>
+    </div>
+
+    <div class="content" th:text="${post.content}">
+        Content here...
+    </div>
+
+    <div class="actions">
+        <a th:href="@{'/posts/' + ${post.id} + '/edit'}" class="btn-edit">Edit</a>
+        <form th:action="@{'/posts/' + ${post.id} + '/delete'}"
+              method="post" style="display:inline;">
+            <button type="submit" class="btn-delete">Delete</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
+

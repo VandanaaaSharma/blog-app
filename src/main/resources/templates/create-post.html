@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Post</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f5fb;
+            margin: 0;
+        }
+        header {
+            background: #4c6fff;
+            color: white;
+            padding: 16px 40px;
+            display: flex;
+            align-items: center;
+        }
+        header a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: bold;
+        }
+        header h2 {
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-top: 12px;
+            font-size: 14px;
+            color: #333;
+        }
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 4px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            resize: vertical;
+        }
+        textarea {
+            min-height: 160px;
+        }
+        .actions {
+            margin-top: 18px;
+        }
+        button {
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: none;
+            background: #4c6fff;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a th:href="@{/}">&#8592; Back</a>
+    <h2>Create New Post</h2>
+</header>
+
+<div class="container">
+    <form th:action="@{/posts}" th:object="${post}" method="post">
+        <label>Title</label>
+        <input type="text" th:field="*{title}" placeholder="Enter post title" required>
+
+        <label>Summary</label>
+        <input type="text" th:field="*{summary}" placeholder="Short description" required>
+
+        <label>Author</label>
+        <input type="text" th:field="*{author}" placeholder="Your name">
+
+        <label>Content</label>
+        <textarea th:field="*{content}" placeholder="Write your blog content here..." required></textarea>
+
+        <div class="actions">
+            <button type="submit">Publish</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
+

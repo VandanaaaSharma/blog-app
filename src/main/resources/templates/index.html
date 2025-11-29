@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f5fb;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #4c6fff;
+            color: white;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        header a {
+            background: white;
+            color: #4c6fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 16px;
+        }
+        .post-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+        }
+        .post-title {
+            margin: 0 0 8px;
+            font-size: 20px;
+            color: #222;
+        }
+        .post-meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .post-summary {
+            margin: 0 0 12px;
+            color: #444;
+        }
+        .post-actions a {
+            margin-right: 10px;
+            font-size: 13px;
+            text-decoration: none;
+            color: #4c6fff;
+        }
+        .empty-state {
+            text-align: center;
+            margin-top: 60px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>My Blog</h1>
+    <a th:href="@{/posts/new}">+ New Post</a>
+</header>
+
+<div class="container">
+    <div th:if="${#lists.isEmpty(posts)}" class="empty-state">
+        <p>No posts yet. Click "New Post" to create your first one!</p>
+    </div>
+
+    <div th:each="post : ${posts}" class="post-card">
+        <h2 class="post-title" th:text="${post.title}">Post title</h2>
+        <div class="post-meta">
+            <span th:text="${post.author != null ? post.author : 'Unknown author'}">Author</span>
+            ·
+            <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy HH:mm')}">Date</span>
+        </div>
+        <p class="post-summary" th:text="${post.summary}">Short summary here...</p>
+        <div class="post-actions">
+            <a th:href="@{'/posts/' + ${post.id}}">Read more</a>
+            <a th:href="@{'/posts/' + ${post.id} + '/edit'}">Edit</a>
+            <form th:action="@{'/posts/' + ${post.id} + '/delete'}" method="post"
+                  style="display:inline;">
+                <button type="submit"
+                        style="border:none;background:none;color:#ff4c4c;cursor:pointer;font-size:13px;">
+                    Delete
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
