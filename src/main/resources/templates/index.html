@@ -103,6 +103,13 @@
                         style="border:none;background:none;color:#ff4c4c;cursor:pointer;font-size:13px;">
                     Delete
                 </button>
+                <div th:if="${post.createdBy == #authentication.name}">
+    <a th:href="@{'/posts/' + ${post.id} + '/edit'}">Edit</a>
+    <form th:action="@{'/posts/' + ${post.id} + '/delete'}" method="post">
+        <button>Delete</button>
+    </form>
+</div>
+
             </form>
         </div>
     </div>

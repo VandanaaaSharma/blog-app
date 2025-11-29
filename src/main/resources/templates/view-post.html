@@ -90,6 +90,13 @@
             <button type="submit" class="btn-delete">Delete</button>
         </form>
     </div>
+    <div th:if="${post.createdBy == #authentication.name}">
+    <a th:href="@{'/posts/' + ${post.id} + '/edit'}">Edit</a>
+    <form th:action="@{'/posts/' + ${post.id} + '/delete'}" method="post">
+        <button>Delete</button>
+    </form>
+</div>
+
 </div>
 
 </body>
