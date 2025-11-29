@@ -34,3 +34,4 @@ public class Post {
 
     private LocalDateTime updatedAt;            // 24: Last update time
 }
+
