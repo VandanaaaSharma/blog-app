@@ -3,6 +3,7 @@ package com.blog.blog_app.service.impl;
 import com.blog.blog_app.model.Post;
 import com.blog.blog_app.repository.PostRepository;
 import com.blog.blog_app.service.PostService;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,34 +39,20 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post updatePost(Long id, Post updatedPost, String username) {
+    public Post updatePost(Long id, Post updatedPost) {
 
         Post existingPost = getPostById(id);
-
-        // Allow only owner to edit
-        if (!existingPost.getCreatedBy().equals(username)) {
-            throw new RuntimeException("Unauthorized to edit this post");
-        }
 
         existingPost.setTitle(updatedPost.getTitle());
         existingPost.setSummary(updatedPost.getSummary());
         existingPost.setContent(updatedPost.getContent());
-        existingPost.setAuthor(updatedPost.getAuthor());
         existingPost.setUpdatedAt(LocalDateTime.now());
 
         return postRepository.save(existingPost);
     }
 
     @Override
-    public void deletePost(Long id, String username) {
-
-        Post existingPost = getPostById(id);
-
-        // Allow only owner to delete
-        if (!existingPost.getCreatedBy().equals(username)) {
-            throw new RuntimeException("Unauthorized to delete this post");
-        }
-
+    public void deletePost(Long id) {
         postRepository.deleteById(id);
     }
 }

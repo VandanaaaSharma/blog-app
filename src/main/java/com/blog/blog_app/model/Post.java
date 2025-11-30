@@ -25,10 +25,9 @@ public class Post {
 
     private LocalDateTime updatedAt;
 
-    // ⭐ Simple username stored as String
+    // Username of the creator
     private String createdBy;
 
-    // ⭐ One post → many comments
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments;
 }

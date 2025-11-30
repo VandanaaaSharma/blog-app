@@ -15,7 +15,7 @@ public class Comment {
 
     private String content;
 
-    private String createdBy;  // username
+    private String createdBy;  // username string
 
     private LocalDateTime createdAt;
 

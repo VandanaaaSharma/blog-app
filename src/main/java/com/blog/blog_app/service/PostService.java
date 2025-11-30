@@ -11,7 +11,9 @@ public interface PostService {
 
     Post createPost(Post post);
 
-    Post updatePost(Long id, Post post, String username);
+    // Option-1 simple update
+    Post updatePost(Long id, Post updatedPost);
 
-    void deletePost(Long id, String username);
+    // Option-1 simple delete
+    void deletePost(Long id);
 }

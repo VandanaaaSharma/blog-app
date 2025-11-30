@@ -1,9 +1,7 @@
 package com.blog.blog_app.controller;
 
 import com.blog.blog_app.model.Post;
-import com.blog.blog_app.model.Comment;
 import com.blog.blog_app.repository.PostRepository;
-import com.blog.blog_app.repository.CommentRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -18,7 +16,6 @@ import java.time.LocalDateTime;
 public class PostController {
 
     private final PostRepository postRepo;
-    private final CommentRepository commentRepo;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -35,7 +32,7 @@ public class PostController {
     @PostMapping("/posts")
     public String savePost(Post post, Principal principal) {
 
-        post.setCreatedBy(principal.getName());
+        post.setCreatedBy(principal.getName());  // username string
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
 
@@ -47,6 +44,7 @@ public class PostController {
     public String viewPost(@PathVariable Long id, Model model, Principal principal) {
 
         Post post = postRepo.findById(id).orElseThrow();
+
         model.addAttribute("post", post);
         model.addAttribute("comments", post.getComments());
         model.addAttribute("currentUser", principal.getName());
@@ -61,7 +59,6 @@ public class PostController {
 
         if (!post.getCreatedBy().equals(principal.getName()) &&
                 !principal.getName().equals("admin")) {
-
             return "redirect:/posts/" + id;
         }
 
@@ -76,7 +73,6 @@ public class PostController {
 
         if (!post.getCreatedBy().equals(principal.getName()) &&
                 !principal.getName().equals("admin")) {
-
             return "redirect:/";
         }
 

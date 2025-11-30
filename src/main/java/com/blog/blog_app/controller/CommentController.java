@@ -27,7 +27,7 @@ public class CommentController {
 
         Comment comment = Comment.builder()
                 .content(content)
-                .createdBy(principal.getName())
+                .createdBy(principal.getName()) // username string
                 .createdAt(LocalDateTime.now())
                 .post(post)
                 .build();
