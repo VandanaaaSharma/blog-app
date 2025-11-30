@@ -16,16 +16,18 @@ public class Post {
 
     private String title;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String summary;
 
     @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    // Username of the creator
     private String createdBy;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)

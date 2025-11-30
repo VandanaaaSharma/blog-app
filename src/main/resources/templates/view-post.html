@@ -3,76 +3,61 @@
 <head>
     <title th:text="${post.title}">Post</title>
     <style>
-        body { background: #f4f5fb; font-family: Arial; margin: 0; }
-        header { background: #4c6fff; color: white; padding: 16px 40px; }
-        a { color: white; text-decoration: none; }
-        .container {
-            max-width: 800px; margin: 30px auto; background: white;
-            padding: 25px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        body { font-family: Arial; background: #f4f5fb; margin: 0; }
+        header { background: #4c6fff; color:white; padding: 16px 40px; display:flex; justify-content:space-between; }
+        header button, header a {
+            background:white; color:#4c6fff; padding:8px 16px; border-radius:20px;
+            text-decoration:none; border:none; cursor:pointer; font-weight:bold;
         }
-        h1 { margin-top: 0; }
-        .meta { font-size: 12px; color: #777; margin-bottom: 12px; }
-        .content { white-space: pre-wrap; line-height: 1.6; color: #333; }
-        .actions a, .actions button {
-            margin-right: 12px; color: #4c6fff; background:none; border:none;
-            font-size: 14px; cursor:pointer;
-        }
-        .delete-btn { color:#ff4c4c; }
-        .comment-box {
-            margin-top: 30px; padding: 15px;
-            background: #f4f5fb; border-radius: 8px;
-        }
-        textarea { width:100%; padding:12px; border-radius:6px; border:1px solid #ccc; }
-        .comment { margin-top:15px; padding:12px; background:white; border-radius:8px;
-            box-shadow:0 1px 3px rgba(0,0,0,0.1); }
-        .comment-author { font-weight:bold; font-size:13px; color:#555; }
+        .container { max-width: 800px; margin: 30px auto; background:white; padding:20px; border-radius:12px; }
+        .comment-box { margin-top: 20px; }
+        .comment { background:#f2f2f2; padding:10px; border-radius:8px; margin-bottom:10px; }
     </style>
 </head>
 <body>
 
 <header>
-    <a th:href="@{/}">&#8592; Back</a>
+    <a th:href="@{/}">← Back</a>
+
+    <form th:action="@{/logout}" method="post">
+        <button>Logout</button>
+    </form>
 </header>
 
 <div class="container">
 
     <h1 th:text="${post.title}">Title</h1>
 
-    <div class="meta">
-        Posted by <span th:text="${post.createdBy}">Author</span> •
-        <span th:text="${#temporals.format(post.createdAt,'dd MMM yyyy HH:mm')}"></span>
-    </div>
+    <p>
+        <b th:text="${post.author != null ? post.author : 'Unknown'}"></b> ·
+        <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy HH:mm')}"></span>
+    </p>
 
-    <div class="content" th:text="${post.content}"></div>
+    <p th:text="${post.content}"></p>
 
-    <!-- Owner OR Admin -->
-    <div class="actions"
-         th:if="${post.createdBy == currentUser or currentUser == 'admin'}">
-
+    <!-- Edit/Delete only if this user is owner or admin -->
+    <div th:if="${post.createdBy == currentUser || currentUser == 'admin'}">
         <a th:href="@{'/posts/' + ${post.id} + '/edit'}">Edit</a>
-
-        <form th:action="@{'/posts/' + ${post.id} + '/delete'}"
-              method="post" style="display:inline;">
-            <button class="delete-btn">Delete</button>
+        <form th:action="@{'/posts/' + ${post.id} + '/delete'}" method="post" style="display:inline;">
+            <button style="color:red;">Delete</button>
         </form>
     </div>
 
-    <!-- COMMENT SECTION -->
+    <hr>
+
+    <h3>Comments</h3>
+
+    <div th:each="c : ${comments}" class="comment">
+        <b th:text="${c.createdBy}"></b><br>
+        <span th:text="${c.content}"></span>
+    </div>
+
     <div class="comment-box">
-        <h3>Leave a Comment</h3>
-
         <form th:action="@{'/posts/' + ${post.id} + '/comment'}" method="post">
-            <textarea name="content" rows="3" placeholder="Write your comment..." required></textarea>
-            <button type="submit" style="margin-top:10px;background:#4c6fff;color:white;padding:10px 20px;border:none;border-radius:6px;">
-                Post Comment
-            </button>
+            <textarea name="content" rows="3" placeholder="Add a comment..." required
+                      style="width:100%;"></textarea>
+            <button style="margin-top:10px;">Post Comment</button>
         </form>
-    </div>
-
-    <!-- Display Comments -->
-    <div th:each="comment : ${comments}" class="comment">
-        <div class="comment-author" th:text="${comment.createdBy}">Username</div>
-        <div th:text="${comment.content}">Comment text</div>
     </div>
 
 </div>
