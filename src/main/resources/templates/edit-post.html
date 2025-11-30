@@ -2,21 +2,113 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Edit Post</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Poppins", Arial, sans-serif;
+
+            /* Fresh Aqua Gradient */
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            background-size: 250% 250%;
+            animation: bgFlow 12s ease infinite;
+
+            padding: 40px;
+            color: white;
+        }
+
+        @keyframes bgFlow {
+            0% { background-position: 0% 40%; }
+            50% { background-position: 100% 60%; }
+            100% { background-position: 0% 40%; }
+        }
+
+        .box {
+            max-width: 700px;
+            margin: auto;
+            background: rgba(255,255,255,0.25);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 35px rgba(0,0,0,0.25);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 600;
+            color: #f9f9f9;
+        }
+
+        label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #f7f7f7;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            margin-bottom: 16px;
+            font-size: 15px;
+
+            background: rgba(255,255,255,0.3);
+            color: #003c6e;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #e8f7ff;
+        }
+
+        button {
+            padding: 14px 26px;
+            border-radius: 12px;
+            border: none;
+            background: #ffe08a;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+            color: #333;
+            transition: 0.25s;
+        }
+
+        button:hover {
+            background: #ffd15e;
+            transform: translateY(-2px);
+        }
+
+        a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
+
 <body>
+
+<div class="box">
 
 <h2>Edit Post</h2>
 
 <form th:action="@{'/posts/' + ${post.id} + '/edit'}" method="post">
-    <label>Title:</label><br>
-    <input type="text" name="title" th:value="${post.title}" required><br><br>
 
-    <label>Summary:</label><br>
-    <input type="text" name="summary" th:value="${post.summary}" required><br><br>
+    <label>Title:</label>
+    <input type="text" name="title" th:value="${post.title}" required>
 
-    <label>Content:</label><br>
-    <textarea name="content" rows="10" cols="50" required
-              th:text="${post.content}"></textarea><br><br>
+    <label>Summary:</label>
+    <input type="text" name="summary" th:value="${post.summary}" required>
+
+    <label>Content:</label>
+    <textarea name="content" rows="10" required
+              th:text="${post.content}"></textarea>
 
     <button type="submit">Update</button>
 </form>
@@ -24,6 +116,8 @@
 <br>
 
 <a th:href="@{'/posts/' + ${post.id}}">⬅ Back to Post</a>
+
+</div>
 
 </body>
 </html>

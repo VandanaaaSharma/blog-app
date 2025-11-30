@@ -2,50 +2,143 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>My Blog</title>
+
     <style>
+
+        /* ---------------- GLOBAL BACKGROUND ---------------- */
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f5fb;
             margin: 0;
-            padding: 0;
+            font-family: "Poppins", Arial, sans-serif;
+
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            background-size: 300% 300%;
+            animation: bgFlow 13s ease infinite;
+
+            padding-bottom: 40px;
         }
+
+        @keyframes bgFlow {
+            0% { background-position: 0% 40%; }
+            50% { background-position: 100% 60%; }
+            100% { background-position: 0% 40%; }
+        }
+
+        /* ---------------- HEADER ---------------- */
         header {
-            background: #4c6fff;
-            color: white;
-            padding: 16px 40px;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(10px);
+            padding: 18px 40px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+
+            color: #2e4a4a;
         }
-        header h1 { margin: 0; font-size: 24px; }
-        header a, header button {
-            background: white;
-            color: #4c6fff;
-            padding: 8px 16px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: bold;
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        header a,
+        header button {
+            padding: 10px 20px;
+            border-radius: 14px;
             border: none;
+            font-weight: bold;
             cursor: pointer;
-            margin-left: 10px;
+            text-decoration: none;
+
+            background: #ffffff;
+            color: #3e6268;
+            transition: 0.25s;
         }
+
+        header a:hover,
+        header button:hover {
+            background: #e9fff8;
+            transform: translateY(-2px);
+        }
+
+        /* ---------------- CONTAINER ---------------- */
         .container {
             max-width: 900px;
-            margin: 30px auto;
-            padding: 0 16px;
+            margin: 40px auto;
+            padding: 30px;
+
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+
+            color: #2b4d4d;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.15);
         }
+
+        /* ---------------- EMPTY STATE ---------------- */
+        .empty-state {
+            text-align: center;
+            margin: 50px 0;
+            font-size: 18px;
+            opacity: 0.85;
+        }
+
+        /* ---------------- POST CARDS ---------------- */
         .post-card {
-            background: white;
-            border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            padding: 22px;
+            margin-bottom: 20px;
+
+            background: rgba(255,255,255,0.65);
+            border-left: 5px solid #6dd4c3;
+
+            border-radius: 16px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.12);
+            transition: 0.3s ease;
         }
-        .empty-state { text-align: center; margin-top: 60px; color: #777; }
-        .delete-btn { color: #ff4c4c; }
+
+        .post-card:hover {
+            background: rgba(255,255,255,0.8);
+            transform: translateY(-4px);
+        }
+
+        .post-card h2 {
+            margin-top: 0;
+            color: #345b63;
+            margin-bottom: 8px;
+        }
+
+        .post-card div {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-bottom: 10px;
+        }
+
+        .post-card p {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #3b6064;
+        }
+
+        .post-card a {
+            display: inline-block;
+            margin-top: 8px;
+            color: #207f74;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.25s;
+        }
+
+        .post-card a:hover {
+            color: #0f5752;
+            text-shadow: 0px 0px 5px #a8edea;
+        }
+
     </style>
 </head>
+
 <body>
 
 <header>
@@ -63,37 +156,25 @@
 <div class="container">
 
     <div th:if="${#lists.isEmpty(posts)}" class="empty-state">
-        <p>No posts yet. Click "New Post" to create your first one!</p>
+        <p>No posts yet. Click <b>New Post</b> to create your first one!</p>
     </div>
 
     <div th:each="post : ${posts}" class="post-card">
 
-        <h2 th:text="${post.title}">Post title</h2>
+        <h2 th:text="${post.title}"></h2>
 
         <div>
-            <!-- FIXED LINE -->
             <span th:text="${post.createdBy != null ? post.createdBy : 'Unknown'}"></span>
             ·
             <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy HH:mm')}"></span>
         </div>
 
-        <p th:text="${post.summary}">Summary...</p>
+        <p th:text="${post.summary}"></p>
 
-        <div>
-            <a th:href="@{'/posts/' + ${post.id}}">Read more</a>
+        <a th:href="@{'/posts/' + ${post.id}}">Read more →</a>
 
-            <span th:if="${post.createdBy == #authentication.name || #authentication.name == 'admin'}">
-
-                <a th:href="@{'/posts/' + ${post.id} + '/edit'}">Edit</a>
-
-                <form th:action="@{'/posts/' + ${post.id} + '/delete'}"
-                      method="post" style="display:inline;">
-                    <button type="submit" class="delete-btn">Delete</button>
-                </form>
-
-            </span>
-        </div>
     </div>
+
 </div>
 
 </body>

@@ -1,25 +1,132 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Create Post</title>
+    <title>Create New Post</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+
+            /* 🌟 Beautiful blog-themed background image */
+            background-image: url('https://images.unsplash.com/photo-1515378791036-0648a3ef77b2');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* 🌟 Soft translucent overlay to improve readability */
+        .overlay {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(4px);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .nav {
+            background: #4c6fff;
+            padding: 16px 40px;
+            color: #fff;
+            font-size: 22px;
+            font-weight: bold;
+            box-shadow: 0 2px 7px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #ffffffd9; /* slightly transparent */
+            padding: 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 6px;
+            color: #444;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #cfd5f5;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            background: #f6f7ff;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            background: #4c6fff;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #3a55e0;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: #4c6fff;
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>Create Post</h1>
+<div class="overlay">
 
-<form th:action="@{/posts}" method="post">
+    <div class="nav">
+        ✏ Create New Blog
+    </div>
 
-    <label>Title</label>
-    <input type="text" name="title" required><br><br>
+    <div class="container">
 
-    <label>Summary</label>
-    <input type="text" name="summary" required><br><br>
+        <h2>Write a New Post</h2>
 
-    <label>Content</label><br>
-    <textarea name="content" rows="10" cols="60" required></textarea><br><br>
+        <form th:action="@{/posts}" method="post">
 
-    <button type="submit">Publish</button>
-</form>
+            <label>Title</label>
+            <input type="text" name="title" placeholder="Enter your blog title" required>
+
+            <label>Summary</label>
+            <input type="text" name="summary" placeholder="Enter a short summary" required>
+
+            <label>Content</label>
+            <textarea name="content" rows="10" placeholder="Write your blog content here..." required></textarea>
+
+            <button type="submit">Publish Post</button>
+        </form>
+
+        <a class="back-link" th:href="@{/}">← Back to Home</a>
+
+    </div>
+</div>
 
 </body>
 </html>
