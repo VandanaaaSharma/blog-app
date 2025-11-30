@@ -2,7 +2,6 @@ package com.blog.blog_app.controller;
 
 import com.blog.blog_app.model.Post;
 import com.blog.blog_app.repository.PostRepository;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,7 +31,7 @@ public class PostController {
     @PostMapping("/posts")
     public String savePost(Post post, Principal principal) {
 
-        post.setCreatedBy(principal.getName());  // username string
+        post.setCreatedBy(principal.getName());
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
 
@@ -46,7 +45,6 @@ public class PostController {
         Post post = postRepo.findById(id).orElseThrow();
 
         model.addAttribute("post", post);
-        model.addAttribute("comments", post.getComments());
         model.addAttribute("currentUser", principal.getName());
 
         return "view-post";
@@ -57,13 +55,37 @@ public class PostController {
 
         Post post = postRepo.findById(id).orElseThrow();
 
+        // owner OR admin can edit
         if (!post.getCreatedBy().equals(principal.getName()) &&
-                !principal.getName().equals("admin")) {
+            !principal.getName().equals("admin")) {
             return "redirect:/posts/" + id;
         }
 
         model.addAttribute("post", post);
         return "edit-post";
+    }
+
+    @PostMapping("/posts/{id}/edit")
+    public String updatePost(@PathVariable Long id,
+                             @ModelAttribute Post updatedPost,
+                             Principal principal) {
+
+        Post existing = postRepo.findById(id).orElseThrow();
+
+        // only owner or admin
+        if (!existing.getCreatedBy().equals(principal.getName()) &&
+            !principal.getName().equals("admin")) {
+            return "redirect:/";
+        }
+
+        existing.setTitle(updatedPost.getTitle());
+        existing.setSummary(updatedPost.getSummary());
+        existing.setContent(updatedPost.getContent());
+        existing.setUpdatedAt(LocalDateTime.now());
+
+        postRepo.save(existing);
+
+        return "redirect:/posts/" + id;
     }
 
     @PostMapping("/posts/{id}/delete")
@@ -72,7 +94,8 @@ public class PostController {
         Post post = postRepo.findById(id).orElseThrow();
 
         if (!post.getCreatedBy().equals(principal.getName()) &&
-                !principal.getName().equals("admin")) {
+            !principal.getName().equals("admin")) {
+
             return "redirect:/";
         }
 
