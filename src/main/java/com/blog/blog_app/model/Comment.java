@@ -15,12 +15,10 @@ public class Comment {
 
     private String content;
 
-    private LocalDateTime createdAt;
+    private String createdBy;  // username
 
-    @ManyToOne
-    private User user;
+    private LocalDateTime createdAt;
 
     @ManyToOne
     private Post post;
 }
-

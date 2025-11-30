@@ -1,7 +1,10 @@
 package com.blog.blog_app.controller;
 
-import com.blog.blog_app.model.*;
-import com.blog.blog_app.repository.*;
+import com.blog.blog_app.model.Comment;
+import com.blog.blog_app.model.Post;
+import com.blog.blog_app.repository.CommentRepository;
+import com.blog.blog_app.repository.PostRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -12,22 +15,20 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class CommentController {
 
-    private final PostRepository postRepo;
     private final CommentRepository commentRepo;
-    private final UserRepository userRepo;
+    private final PostRepository postRepo;
 
     @PostMapping("/posts/{id}/comment")
     public String addComment(@PathVariable Long id,
                              @RequestParam String content,
                              Principal principal) {
 
-        User user = userRepo.findByUsername(principal.getName());
-        Post post = postRepo.findById(id).get();
+        Post post = postRepo.findById(id).orElseThrow();
 
         Comment comment = Comment.builder()
                 .content(content)
+                .createdBy(principal.getName())
                 .createdAt(LocalDateTime.now())
-                .user(user)
                 .post(post)
                 .build();
 

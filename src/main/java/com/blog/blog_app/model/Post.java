@@ -25,9 +25,8 @@ public class Post {
 
     private LocalDateTime updatedAt;
 
-    // ⭐ Post belongs to a user
-    @ManyToOne
-    private User createdBy;
+    // ⭐ Simple username stored as String
+    private String createdBy;
 
     // ⭐ One post → many comments
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)

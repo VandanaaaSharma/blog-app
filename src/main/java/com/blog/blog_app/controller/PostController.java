@@ -1,104 +1,86 @@
 package com.blog.blog_app.controller;
 
 import com.blog.blog_app.model.Post;
-import com.blog.blog_app.service.PostService;
+import com.blog.blog_app.model.Comment;
+import com.blog.blog_app.repository.PostRepository;
+import com.blog.blog_app.repository.CommentRepository;
 
-import java.security.Principal;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.time.LocalDateTime;
+
 @Controller
+@RequiredArgsConstructor
 public class PostController {
 
-    private final PostService postService;
+    private final PostRepository postRepo;
+    private final CommentRepository commentRepo;
 
-    // Constructor injection
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
-
-    // ---------------- HOME / LIST PAGE ----------------
     @GetMapping("/")
-    public String viewHomePage(Model model) {
-        model.addAttribute("posts", postService.getAllPosts());
-        return "index"; 
+    public String home(Model model) {
+        model.addAttribute("posts", postRepo.findAll());
+        return "index";
     }
 
-    // ---------------- SHOW CREATE FORM ----------------
     @GetMapping("/posts/new")
-    public String showCreateForm(Model model) {
+    public String newPost(Model model) {
         model.addAttribute("post", new Post());
         return "create-post";
     }
 
-    // ---------------- HANDLE CREATE FORM SUBMIT ----------------
     @PostMapping("/posts")
-    public String createPost(@ModelAttribute("post") Post post,
-                             BindingResult result,
-                             Principal principal) {
+    public String savePost(Post post, Principal principal) {
 
-        if (result.hasErrors()) {
-            return "create-post";
-        }
+        post.setCreatedBy(principal.getName());
+        post.setCreatedAt(LocalDateTime.now());
+        post.setUpdatedAt(LocalDateTime.now());
 
-        // Save logged-in username in post
-        if (principal != null) {
-            post.setCreatedBy(principal.getName());
-        } else {
-            post.setCreatedBy("Anonymous"); // fallback
-        }
-
-        postService.createPost(post);
+        postRepo.save(post);
         return "redirect:/";
     }
 
-    // ---------------- VIEW SINGLE POST ----------------
     @GetMapping("/posts/{id}")
-    public String viewPost(@PathVariable Long id, Model model) {
-        Post post = postService.getPostById(id);
+    public String viewPost(@PathVariable Long id, Model model, Principal principal) {
+
+        Post post = postRepo.findById(id).orElseThrow();
         model.addAttribute("post", post);
+        model.addAttribute("comments", post.getComments());
+        model.addAttribute("currentUser", principal.getName());
+
         return "view-post";
     }
 
-    // ---------------- SHOW EDIT FORM ----------------
     @GetMapping("/posts/{id}/edit")
-    public String showEditForm(@PathVariable Long id, 
-                               Model model, 
-                               Principal principal) {
+    public String editPost(@PathVariable Long id, Model model, Principal principal) {
 
-        Post post = postService.getPostById(id);
+        Post post = postRepo.findById(id).orElseThrow();
 
-        // Only creator can edit
-        if (!post.getCreatedBy().equals(principal.getName())) {
-            return "redirect:/"; // redirect if not allowed
+        if (!post.getCreatedBy().equals(principal.getName()) &&
+                !principal.getName().equals("admin")) {
+
+            return "redirect:/posts/" + id;
         }
 
         model.addAttribute("post", post);
         return "edit-post";
     }
 
-    // ---------------- HANDLE EDIT SUBMIT ----------------
-    @PostMapping("/posts/{id}/update")
-    public String updatePost(@PathVariable Long id,
-                             @ModelAttribute("post") Post updatedPost,
-                             BindingResult result,
-                             Principal principal) {
-
-        if (result.hasErrors()) {
-            return "edit-post";
-        }
-
-        postService.updatePost(id, updatedPost, principal.getName());
-        return "redirect:/posts/" + id;
-    }
-
-    // ---------------- DELETE POST ----------------
     @PostMapping("/posts/{id}/delete")
     public String deletePost(@PathVariable Long id, Principal principal) {
-        postService.deletePost(id, principal.getName());
+
+        Post post = postRepo.findById(id).orElseThrow();
+
+        if (!post.getCreatedBy().equals(principal.getName()) &&
+                !principal.getName().equals("admin")) {
+
+            return "redirect:/";
+        }
+
+        postRepo.delete(post);
         return "redirect:/";
     }
 }
